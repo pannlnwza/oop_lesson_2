@@ -106,22 +106,39 @@ my_table1 = my_DB.search('cities')
 my_table3 = my_DB.search('players')
 # print(my_table3.table_name, my_table3.table)
 
-my_table3_filtered = my_table3.filter(lambda x: 'ia' in x['team']).filter(lambda x: int(x['minutes']) < 200).filter(lambda x: int(x['passes']) > 100)
-player_display = my_table3_filtered.select(['surname', 'team', 'position'])
-# print(player_display)
-print(f"{player_display[0]['surname']}, {player_display[0]['team']}, {player_display[0]['position']}")
+# my_table3_filtered = my_table3.filter(lambda x: 'ia' in x['team']).filter(lambda x: int(x['minutes']) < 200).filter(lambda x: int(x['passes']) > 100)
+# player_display = my_table3_filtered.select(['surname', 'team', 'position'])
+# # print(player_display)
+# print(f"{player_display[0]['surname']}, {player_display[0]['team']}, {player_display[0]['position']}")
+# print()
+#
+# below10 = table4.filter(lambda x: int(x['ranking']) < 10).aggregate(lambda x: sum(x)/len(x), 'games')
+# above10 = table4.filter(lambda x: int(x['ranking']) >= 10).aggregate(lambda x: sum(x)/len(x), 'games')
+# print('The average number of games played for teams ranking below 10 versus teams ranking above or equal 10')
+# print(below10, above10)
+# print()
+#
+# forward = table3.filter(lambda x: x['position'] == 'forward').aggregate(lambda x: sum(x)/len(x), 'passes')
+# midfielder = table3.filter(lambda x: x['position'] == 'midfielder').aggregate(lambda x: sum(x)/len(x), 'passes')
+# print('The average number of passes made by forwards versus by midfielders')
+# print(forward, midfielder)
+# print()
+
+# Titanic
+first_class = table5.filter(lambda x: x['class'] == '1').aggregate(lambda x: sum(x)/len(x), 'fare')
+third_class = table5.filter(lambda x: x['class'] == '3').aggregate(lambda x: sum(x)/len(x), 'fare')
+print('The average fare paid by passengers in the first class versus in the third class')
+print(first_class, third_class)
 print()
 
-below10 = table4.filter(lambda x: int(x['ranking']) < 10).aggregate(lambda x: sum(x)/len(x), 'games')
-above10 = table4.filter(lambda x: int(x['ranking']) >= 10).aggregate(lambda x: sum(x)/len(x), 'games')
-print('The average number of games played for teams ranking below 10 versus teams ranking above or equal 10')
-print(below10, above10)
-print()
-
-forward = table3.filter(lambda x: x['position'] == 'forward').aggregate(lambda x: sum(x)/len(x), 'passes')
-midfielder = table3.filter(lambda x: x['position'] == 'midfielder').aggregate(lambda x: sum(x)/len(x), 'passes')
-print('The average number of passes made by forwards versus by midfielders')
-print(forward, midfielder)
+male = table5.filter(lambda x: x['gender'] == 'M')
+male_sur = male.filter(lambda x: x['survived'] == 'yes')
+male_sur_rate = (len(male_sur.table)/len(male.table))*100
+female = table5.filter(lambda x: x['gender'] == 'F')
+female_sur = female.filter(lambda x: x['survived'] == 'yes')
+female_sur_rate = (len(female_sur.table)/len(female.table))*100
+print('The survival rate of male versus female passengers')
+print(f'Male: {male_sur_rate:.2f}% \nFemale: {female_sur_rate:.2f}%')
 
 # print("Test filter: only filtering out cities in Italy")
 # my_table1_filtered = my_table1.filter(lambda x: x['country'] == 'Italy')
