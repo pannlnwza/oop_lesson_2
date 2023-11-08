@@ -105,11 +105,23 @@ my_DB.insert(table5)
 my_table1 = my_DB.search('cities')
 my_table3 = my_DB.search('players')
 # print(my_table3.table_name, my_table3.table)
+
 my_table3_filtered = my_table3.filter(lambda x: 'ia' in x['team']).filter(lambda x: int(x['minutes']) < 200).filter(lambda x: int(x['passes']) > 100)
 player_display = my_table3_filtered.select(['surname', 'team', 'position'])
 # print(player_display)
 print(f"{player_display[0]['surname']}, {player_display[0]['team']}, {player_display[0]['position']}")
+print()
 
+below10 = table4.filter(lambda x: int(x['ranking']) < 10).aggregate(lambda x: sum(x)/len(x), 'games')
+above10 = table4.filter(lambda x: int(x['ranking']) >= 10).aggregate(lambda x: sum(x)/len(x), 'games')
+print('The average number of games played for teams ranking below 10 versus teams ranking above or equal 10')
+print(below10, above10)
+print()
+
+forward = table3.filter(lambda x: x['position'] == 'forward').aggregate(lambda x: sum(x)/len(x), 'passes')
+midfielder = table3.filter(lambda x: x['position'] == 'midfielder').aggregate(lambda x: sum(x)/len(x), 'passes')
+print('The average number of passes made by forwards versus by midfielders')
+print(forward, midfielder)
 
 # print("Test filter: only filtering out cities in Italy")
 # my_table1_filtered = my_table1.filter(lambda x: x['country'] == 'Italy')
