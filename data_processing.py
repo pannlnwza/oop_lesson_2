@@ -70,13 +70,25 @@ class Table:
             if condition(item1):
                 filtered_table.table.append(item1)
         return filtered_table
-    
+
+    def __is_float(self, element):
+        if element is None:
+            return False
+        try:
+            float(element)
+            return True
+        except ValueError:
+            return False
+
     def aggregate(self, function, aggregation_key):
         temps = []
         for item1 in self.table:
-            temps.append(float(item1[aggregation_key]))
+            if self.__is_float(item1[aggregation_key]):
+                temps.append(float(item1[aggregation_key]))
+            else:
+                temps.append(item1[aggregation_key])
         return function(temps)
-    
+
     def select(self, attributes_list):
         temps = []
         for item1 in self.table:
@@ -125,20 +137,21 @@ my_table3 = my_DB.search('players')
 # print()
 
 # Titanic
-first_class = table5.filter(lambda x: x['class'] == '1').aggregate(lambda x: sum(x)/len(x), 'fare')
-third_class = table5.filter(lambda x: x['class'] == '3').aggregate(lambda x: sum(x)/len(x), 'fare')
-print('The average fare paid by passengers in the first class versus in the third class')
-print(first_class, third_class)
-print()
+# first_class = table5.filter(lambda x: x['class'] == '1').aggregate(lambda x: sum(x)/len(x), 'fare')
+# third_class = table5.filter(lambda x: x['class'] == '3').aggregate(lambda x: sum(x)/len(x), 'fare')
+# print('The average fare paid by passengers in the first class versus in the third class')
+# print(first_class, third_class)
+# print()
+#
+# male = table5.filter(lambda x: x['gender'] == 'M')
+# male_sur = male.filter(lambda x: x['survived'] == 'yes')
+# male_sur_rate = (len(male_sur.table)/len(male.table))*100
+# female = table5.filter(lambda x: x['gender'] == 'F')
+# female_sur = female.filter(lambda x: x['survived'] == 'yes')
+# female_sur_rate = (len(female_sur.table)/len(female.table))*100
+# print('The survival rate of male versus female passengers')
+# print(f'Male: {male_sur_rate:.2f}% \nFemale: {female_sur_rate:.2f}%')
 
-male = table5.filter(lambda x: x['gender'] == 'M')
-male_sur = male.filter(lambda x: x['survived'] == 'yes')
-male_sur_rate = (len(male_sur.table)/len(male.table))*100
-female = table5.filter(lambda x: x['gender'] == 'F')
-female_sur = female.filter(lambda x: x['survived'] == 'yes')
-female_sur_rate = (len(female_sur.table)/len(female.table))*100
-print('The survival rate of male versus female passengers')
-print(f'Male: {male_sur_rate:.2f}% \nFemale: {female_sur_rate:.2f}%')
 
 # print("Test filter: only filtering out cities in Italy")
 # my_table1_filtered = my_table1.filter(lambda x: x['country'] == 'Italy')
