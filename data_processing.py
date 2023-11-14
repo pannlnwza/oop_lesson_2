@@ -146,9 +146,21 @@ my_pivot = my_table5.pivot_table(['embarked', 'gender', 'class'], ['fare', 'fare
 print(my_pivot)
 print()
 
+print('Test cases')
+print('=====================')
+soccer_pivot = my_table3.pivot_table(['position'], ['passes', 'shots'], [lambda x: sum(x)/len(x), lambda x: sum(x)/len(x)])
+print('1.)')
+print('\n'.join(str(row) for row in soccer_pivot))
+print()
 
+country_pivot = my_table4.pivot_table(['EU', 'coastline'],['temperature', 'latitude', 'latitude'], [lambda x: sum(x)/len(x), lambda x: min(x), lambda x: max(x)])
+print('2.)')
+print("\n".join(str(row) for row in country_pivot))
+print()
 
-
+titanic_pivot = my_table5.pivot_table(['class', 'gender', 'survived'], ['survived', 'fare'], [lambda x: len(x), lambda x: sum(x)/len(x)])
+print('3.)')
+print("\n".join(str(row) for row in titanic_pivot))
 
 # print(my_table3.table_name, my_table3.table)
 
