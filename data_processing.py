@@ -1,4 +1,6 @@
 import csv, os
+import copy
+from combination_gen import gen_comb_list
 
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
@@ -46,8 +48,8 @@ class DB:
             if table.table_name == table_name:
                 return table
         return None
-    
-import copy
+
+
 class Table:
     def __init__(self, table_name, table):
         self.table_name = table_name
@@ -99,6 +101,27 @@ class Table:
             temps.append(dict_temp)
         return temps
 
+    def pivot_table(self, keys_to_pivot_list, keys_to_aggregate_list, aggregate_func_list):
+        unique_values_list = []
+        for keys in keys_to_pivot_list:
+            inside_list = []
+            for selected_keys in self.select(keys_to_pivot_list):
+                if selected_keys.get(keys) not in inside_list:
+                    inside_list.append(selected_keys.get(keys))
+            unique_values_list.append(inside_list)
+        comb = gen_comb_list(unique_values_list)
+        pivot = []
+        for i in comb:
+            temp = self.filter(lambda x: x[keys_to_pivot_list[0]] == i[0])
+            for j in range(1, len(keys_to_pivot_list)):
+                temp = temp.filter(lambda x: x[keys_to_pivot_list[j]] == i[j])
+            temp_list = []
+            for k in range(len(keys_to_aggregate_list)):
+                result = temp.aggregate(aggregate_func_list[k], keys_to_aggregate_list[k])
+                temp_list.append(result)
+            pivot.append([i, temp_list])
+        return pivot
+
     def __str__(self):
         return self.table_name + ':' + str(self.table)
 
@@ -115,7 +138,18 @@ my_DB.insert(table3)
 my_DB.insert(table4)
 my_DB.insert(table5)
 my_table1 = my_DB.search('cities')
+my_table2 = my_DB.search('countries')
+my_table4 = my_table1.join(my_table2, 'country')
 my_table3 = my_DB.search('players')
+my_table5 = my_DB.search('titanic')
+my_pivot = my_table5.pivot_table(['embarked', 'gender', 'class'], ['fare', 'fare', 'fare', 'last'], [lambda x: min(x), lambda x: max(x), lambda x: sum(x)/len(x), lambda x: len(x)])
+print(my_pivot)
+print()
+
+
+
+
+
 # print(my_table3.table_name, my_table3.table)
 
 # my_table3_filtered = my_table3.filter(lambda x: 'ia' in x['team']).filter(lambda x: int(x['minutes']) < 200).filter(lambda x: int(x['passes']) > 100)
@@ -175,8 +209,6 @@ my_table3 = my_DB.search('players')
 # print()
 #
 # print("Test join: finding cities in non-EU countries whose temperatures are below 5.0")
-# my_table2 = my_DB.search('countries')
-# my_table3 = my_table1.join(my_table2, 'country')
 # my_table3_filtered = my_table3.filter(lambda x: x['EU'] == 'no').filter(lambda x: float(x['temperature']) < 5.0)
 # print(my_table3_filtered.table)
 # print()
